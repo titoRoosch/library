@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3303:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - library_laravel_app_network
+
+  test_db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: test_${MYSQL_DATABASE} # Usando um banco de dados de teste separado
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3304:3306" # Porta diferente do banco de dados principal
+    volumes:
+      - test_db_data:/var/lib/mysql
+    networks:
+      - library_laravel_app_network
+
+  web:
+    build: .
+    restart: always
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+    networks:
+      - library_laravel_app_network
+
+volumes:
+  db_data:
+  test_db_data:
+networks:
+  library_laravel_app_network:
+    external: true
