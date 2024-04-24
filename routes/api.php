@@ -33,3 +33,49 @@ Route::group([
     Route::post('me', 'AuthController@me');
 
 });
+
+
+Route::group([
+
+    'middleware' => ['api', 'jwt.auth'],
+    'namespace' => 'App\Http\Controllers',
+    'prefix' => 'user'
+
+], function ($router) {
+
+    Route::get('index', 'UserController@index')->middleware('auth:api', 'checkUserRole:super');
+    Route::get('show/{id}', 'UserController@show')->middleware('auth:api', 'CheckUserOrRole:super');
+    Route::post('store', 'UserController@store');
+    Route::put('update/{id}', 'UserController@update')->middleware('auth:api', 'CheckUserOrRole:super');
+    Route::delete('delete/{id}', 'UserController@delete')->middleware('auth:api', 'checkUserRole:super');
+});
+
+Route::group([
+
+    'middleware' => ['api', 'jwt.auth'],
+    'namespace' => 'App\Http\Controllers',
+    'prefix' => 'author'
+
+], function ($router) {
+
+    Route::get('index', 'AuthorController@index');
+    Route::get('show/{id}', 'AuthorController@show');
+    Route::post('store', 'AuthorController@store')->middleware('auth:api', 'checkUserRole:super');
+    Route::put('update/{id}', 'AuthorController@update')->middleware('auth:api', 'checkUserRole:super');
+    Route::delete('delete/{id}', 'AuthorController@delete')->middleware('auth:api', 'checkUserRole:super');
+});
+
+Route::group([
+
+    'middleware' => ['api', 'jwt.auth'],
+    'namespace' => 'App\Http\Controllers',
+    'prefix' => 'book'
+
+], function ($router) {
+
+    Route::get('index', 'BookController@index');
+    Route::get('show/{id}', 'BookController@show');
+    Route::post('store', 'BookController@store')->middleware('auth:api', 'checkUserRole:super');
+    Route::put('update/{id}', 'BookController@update')->middleware('auth:api', 'checkUserRole:super');
+    Route::delete('delete/{id}', 'BookController@delete')->middleware('auth:api', 'checkUserRole:super');
+});

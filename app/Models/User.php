@@ -21,6 +21,7 @@ class User extends Authenticatable implements JWTSubject
     protected $fillable = [
         'name',
         'email',
+        'role',
         'password',
     ];
 
@@ -43,6 +44,11 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+
+    public function books() {
+        return $this->belongsToMany(Book::class, 'rents', 'book_id', 'user_id');
+    }
 
     public function getJWTIdentifier()
     {
