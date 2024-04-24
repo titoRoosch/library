@@ -9,16 +9,27 @@ class RentService implements CrudServiceInterface {
 
     public function getAll()
     {
-        return Rent::all();
+        return Rent::with('books', 'users')->get();
     }
 
     public function getById($id)
     {
-        return Rent::find($id);
+        return Rent::with('books', 'users')->find($id);
     }
 
     public function create(array $data)
     {
+        $rules = [
+            'user_id' => 'required|exists:users,id',
+            'book_id' => 'required|exists:books,id',
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        if ($validator->fails()) {
+            return [];
+        }
+
         return Rent::create($data);
     }
 
@@ -26,6 +37,18 @@ class RentService implements CrudServiceInterface {
     {
         $Rent = Rent::findOrFail($id);
         $Rent->update($data);
+
+        $rules = [
+            'user_id' => 'required|exists:users,id',
+            'book_id' => 'required|exists:books,id',
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        if ($validator->fails()) {
+            return [];
+        }
+
         return $Rent;
     }
 

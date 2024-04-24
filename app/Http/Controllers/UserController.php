@@ -32,7 +32,7 @@ class UserController extends Controller
         return response()->json($author);
     }
 
-    public function store(AuthorRequest $request) {
+    public function store(UserRequest $request) {
 
         $data = [
             'email' => $request['email'],
@@ -44,7 +44,7 @@ class UserController extends Controller
         return response()->json($author);
     }
 
-    public function update(AuthorRequest $request, $id) {
+    public function update(UserRequest $request, $id) {
 
         $data = [
             'email' => $request['email'],

@@ -37,17 +37,17 @@ Route::group([
 
 Route::group([
 
-    'middleware' => ['api', 'jwt.auth'],
+    'middleware' => ['api'],
     'namespace' => 'App\Http\Controllers',
     'prefix' => 'user'
 
 ], function ($router) {
 
-    Route::get('index', 'UserController@index')->middleware('auth:api', 'checkUserRole:super');
-    Route::get('show/{id}', 'UserController@show')->middleware('auth:api', 'CheckUserOrRole:super');
+    Route::get('index', 'UserController@index')->middleware('jwt.auth', 'checkUserRole:super');
+    Route::get('show/{id}', 'UserController@show')->middleware('jwt.auth', 'CheckUserOrRole:super');
     Route::post('store', 'UserController@store');
-    Route::put('update/{id}', 'UserController@update')->middleware('auth:api', 'CheckUserOrRole:super');
-    Route::delete('delete/{id}', 'UserController@delete')->middleware('auth:api', 'checkUserRole:super');
+    Route::put('update/{id}', 'UserController@update')->middleware('jwt.auth', 'CheckUserOrRole:super');
+    Route::delete('delete/{id}', 'UserController@delete')->middleware('jwt.auth', 'checkUserRole:super');
 });
 
 Route::group([
@@ -78,4 +78,19 @@ Route::group([
     Route::post('store', 'BookController@store')->middleware('auth:api', 'checkUserRole:super');
     Route::put('update/{id}', 'BookController@update')->middleware('auth:api', 'checkUserRole:super');
     Route::delete('delete/{id}', 'BookController@delete')->middleware('auth:api', 'checkUserRole:super');
+});
+
+Route::group([
+
+    'middleware' => ['api', 'jwt.auth'],
+    'namespace' => 'App\Http\Controllers',
+    'prefix' => 'rent'
+
+], function ($router) {
+
+    Route::get('index', 'RentController@index')->middleware('auth:api', 'checkUserRole:super');
+    Route::get('show/{id}', 'RentController@show');
+    Route::post('store', 'RentController@store')->middleware('jwt.auth', 'CheckUserOrRole:super');
+    Route::put('update/{id}', 'RentController@update')->middleware('jwt.auth', 'CheckUserOrRole:super');
+    Route::delete('delete/{id}', 'RentController@delete')->middleware('jwt.auth', 'CheckUserOrRole:super');
 });
