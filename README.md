@@ -94,15 +94,15 @@ Certifique-se de substituir os valores de exemplo pelos detalhes da sua configur
 
 Para processar eventos de fila em segundo plano, você precisa executar o worker de fila do Laravel. Você pode fazer isso executando o comando `php artisan queue:work`. Certifique-se de que o worker de fila esteja em execução para que os eventos na fila sejam processados adequadamente.
 
-    ```
+    
     php artisan queue:work
-    ```
+    
 ## Executando Testes Unitários
 
 Para executar os testes unitários, execute o seguinte comando:
 
-    ```
+    
     docker-compose run --rm web vendor/bin/phpunit
-    ```
+    
 
 Isso iniciará os contêineres Docker necessários e executará os testes unitários.
