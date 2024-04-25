@@ -35,7 +35,10 @@ class AuthorService implements CrudServiceInterface {
         $validator = Validator::make($data, $rules);
 
         if ($validator->fails()) {
-            return [];
+            $errors = $validator->errors();
+            $errorsArray = $errors->toArray();
+            
+            return $errorsArray;
         }
 
         return Author::create($data);
@@ -44,14 +47,17 @@ class AuthorService implements CrudServiceInterface {
     public function update(array $data, $id)
     {
         $rules = [
-            'name' => 'required|string|max:255|unique:authors,name',
+            'name' => 'required|string|max:255|unique:authors,name,' . $id,
             'birth_date' => 'required|date',
         ];
 
         $validator = Validator::make($data, $rules);
 
         if ($validator->fails()) {
-            return [];
+            $errors = $validator->errors();
+            $errorsArray = $errors->toArray();
+            
+            return $errorsArray;
         }
 
         $author = Author::findOrFail($id);

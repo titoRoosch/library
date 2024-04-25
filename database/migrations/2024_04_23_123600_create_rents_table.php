@@ -16,6 +16,8 @@ return new class extends Migration
             $table->timestamps();
             $table->unsignedBigInteger('book_id');
             $table->foreign('book_id')->references('id')->on('books');
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->date('rent_date');
             $table->date('scheduled_return');
             $table->string('status');

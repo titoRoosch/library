@@ -17,4 +17,13 @@ class Book extends Model
     public function authors() {
         return $this->belongsToMany(Author::class, 'book_author_relations', 'book_id', 'author_id');
     }
+
+    public function rents()
+    {
+        return $this->belongsToMany(Rent::class);
+    }
+
+    public function users(){
+        return $this->belongsToMany(User::class, 'rents', 'book_id', 'user_id')->withPivot('rent_date', 'scheduled_return', 'status');
+    }
 }

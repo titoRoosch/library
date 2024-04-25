@@ -28,12 +28,11 @@ class BookController extends Controller
     }
 
     public function show($id) {
-        $book = $this->bookService->read($id);
+        $book = $this->bookService->getById($id);
         return response()->json($book);
     }
 
     public function store(BookRequest $request) {
-
         $data = [
             'title' => $request['title'],
             'publish_date' => $request['publish_date'],

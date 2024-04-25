@@ -2,56 +2,16 @@
 
 namespace Tests\Feature;
 
-use App\Models\Author;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCaseBase;
 
-class AuthorTest extends TestCaseBase
+class UserTest extends TestCaseBase
 {
-
     use DatabaseTransactions;
 
-    public function testGetAuthor(): void
-    {
-        $mock = $this->mocks();
-
-        $authData = $this->createUserAndGetToken();
-
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $authData['token'],
-        ])->get('/api/author/index');
-
-        $content = $response->getContent();
-
-        $responseData = json_decode($content, true);
-        $data = $responseData;
-
-        $response->assertStatus(200);
-        // $this->assertEquals(3, count($data));
-    }
-
-    public function testGetAuthorById(): void
-    {
-        $mock = $this->mocks();
-
-        $authData = $this->createUserAndGetToken();
-
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $authData['token'],
-        ])->get('/api/author/show/' . $mock['author'][0]->id);
-
-        $content = $response->getContent();
-
-        $responseData = json_decode($content, true);
-        $data = $responseData;
-
-
-        $response->assertStatus(200);
-        $this->assertEquals($mock['author'][0]->id, $data['id']);
-    }
-
-    public function testCreateAuthor(): void
+    public function testGetUser(): void
     {
         $mock = $this->mocks();
 
@@ -59,70 +19,88 @@ class AuthorTest extends TestCaseBase
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $authData['token'],
-        ])->post('/api/author/store/', [
-            'name' => 'teste',
-            'birth_date' => '1995-07-04'
+        ])->get('/api/user/index');
+
+        $content = $response->getContent();
+
+        $responseData = json_decode($content, true);
+
+        $response->assertStatus(200);
+        // $this->assertEquals(3, count($responseData));
+    }
+
+    public function testGetUserById(): void
+    {
+        $mock = $this->mocks();
+
+        $authData = $this->createUserAndGetToken('super');
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $authData['token'],
+        ])->get('/api/user/show/' . $mock['user']->id);
+
+        $content = $response->getContent();
+
+        $responseData = json_decode($content, true);
+
+        $response->assertStatus(200);
+        $this->assertEquals($mock['user']->id, $responseData['id']);
+    }
+
+    public function testCreateUser(): void
+    {
+        $response = $this->post('/api/user/store', [
+            'email' => 'teste@teste.com',
+            'password' => 'password',
+            'name' => 'teste'
         ]);
 
         $content = $response->getContent();
 
         $responseData = json_decode($content, true);
-        $data = $responseData;
-
 
         $response->assertStatus(200);
-        $this->assertEquals('teste', $data['name']);
+        $this->assertEquals('teste@teste.com', $responseData['email']);
     }
 
-
-    public function testUpdateAuthor(): void
+    public function testUpdateUser(): void
     {
-        $mock = $this->mocks();
-
         $authData = $this->createUserAndGetToken('super');
-
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $authData['token'],
-        ])->put('/api/author/update/' . $mock['author'][0]->id, [
-            'name' => $mock['author'][0]->name,
-            'birth_date' => '1995-07-04'
+        ])->put('/api/user/update/'.$authData['user']->id, [
+            'email' => $authData['user']->email,
+            'password' => 'password1',
+            'name' => 'teste2'
         ]);
 
         $content = $response->getContent();
 
         $responseData = json_decode($content, true);
-        $data = $responseData;
-
 
         $response->assertStatus(200);
-        $this->assertEquals($mock['author'][0]->id, $data['id']);
+        $this->assertEquals('teste2', $responseData['name']);
     }
 
-    public function testDeleteAuthor(): void
+    public function testDeleteUser(): void
     {
-        $mock = $this->mocks();
-
         $authData = $this->createUserAndGetToken('super');
-
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $authData['token'],
-        ])->delete('/api/author/delete/' . $mock['author'][0]->id);
+        ])->delete('/api/user/delete/'.$authData['user']->id);
 
         $content = $response->getContent();
 
         $responseData = json_decode($content, true);
-        $data = $responseData;
-
 
         $response->assertStatus(200);
     }
 
     protected function mocks() 
     {
-        $author = Author::factory(3)->create();
+        $user = User::factory()->create();
 
         $mock = [
-            'author' => $author,
+            'user' => $user,
         ];
 
         return $mock;

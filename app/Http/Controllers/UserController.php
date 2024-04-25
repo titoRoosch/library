@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Services\UserService;
+use App\Models\User;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\Notification;
+use App\Events\NewBookRent;
+use Illuminate\Support\Facades\Queue;
 
 class UserController extends Controller
 {
@@ -28,7 +33,7 @@ class UserController extends Controller
     }
 
     public function show($id) {
-        $author = $this->userService->read($id);
+        $author = $this->userService->getById($id);
         return response()->json($author);
     }
 
@@ -59,5 +64,11 @@ class UserController extends Controller
     public function delete($id) {
         $author = $this->userService->delete($id);
         return response()->json(null);
+    }
+
+    public function mail() {
+        $user = User::first();
+        dispatch(new NewBookRent($user));
+
     }
 }

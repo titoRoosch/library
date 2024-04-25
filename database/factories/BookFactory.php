@@ -10,7 +10,7 @@ use Carbon\Carbon;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
  */
-class AuthorFactory extends Factory
+class BookFactory extends Factory
 {
     /**
      * The current password being used by the factory.
@@ -25,8 +25,8 @@ class AuthorFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'birth_date' => Carbon::parse(now())->format('Y.m.d'),
+            'title' => fake()->name(),
+            'publish_date' => Carbon::parse(now())->format('Y.m.d'),
         ];
     }
 }

@@ -35,15 +35,16 @@ class BookService implements CrudServiceInterface {
 
     public function update(array $data, $id)
     {
-        $Book = Book::findOrFail($id);
-        $Book->update($data);
-        return $Book;
+        $book = Book::findOrFail($id);
+        $book->update($data);
+        return $book;
     }
 
     public function delete($id)
     {
-        $Book = Book::findOrFail($id);
-        $Book->delete();
+        $book = Book::findOrFail($id);
+        $book->authors()->detach();
+        $book->delete();
     }
 
 }

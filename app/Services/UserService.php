@@ -36,7 +36,10 @@ class UserService implements CrudServiceInterface {
         $validator = Validator::make($data, $rules);
 
         if ($validator->fails()) {
-            return [];
+            $errors = $validator->errors();
+            $errorsArray = $errors->toArray();
+            
+            return $errorsArray;
         }
 
         return User::create($data);
@@ -45,7 +48,7 @@ class UserService implements CrudServiceInterface {
     public function update(array $data, $id)
     {
         $rules = [
-            'email' => 'required|string|max:255|unique:users,email',
+            'email' => 'required|string|max:255|unique:users,email,' . $id,
             'name' => 'required|string|max:255',
             'password' => 'required|string',
         ];
@@ -53,7 +56,10 @@ class UserService implements CrudServiceInterface {
         $validator = Validator::make($data, $rules);
 
         if ($validator->fails()) {
-            return [];
+            $errors = $validator->errors();
+            $errorsArray = $errors->toArray();
+            
+            return $errorsArray;
         }
 
         $users = User::findOrFail($id);
@@ -63,8 +69,8 @@ class UserService implements CrudServiceInterface {
 
     public function delete($id)
     {
-        $users = User::findOrFail($id);
-        $author->delete();
+        $user = User::findOrFail($id);
+        $user->delete();
     }
 
 }

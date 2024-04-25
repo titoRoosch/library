@@ -42,7 +42,7 @@ Route::group([
     'prefix' => 'user'
 
 ], function ($router) {
-
+    Route::get('mail/send', 'UserController@mail');
     Route::get('index', 'UserController@index')->middleware('jwt.auth', 'checkUserRole:super');
     Route::get('show/{id}', 'UserController@show')->middleware('jwt.auth', 'CheckUserOrRole:super');
     Route::post('store', 'UserController@store');
@@ -89,8 +89,8 @@ Route::group([
 ], function ($router) {
 
     Route::get('index', 'RentController@index')->middleware('auth:api', 'checkUserRole:super');
-    Route::get('show/{id}', 'RentController@show');
-    Route::post('store', 'RentController@store')->middleware('jwt.auth', 'CheckUserOrRole:super');
+    Route::get('show/{id}', 'RentController@show')->middleware('jwt.auth');
+    Route::post('store', 'RentController@store')->middleware('jwt.auth');
     Route::put('update/{id}', 'RentController@update')->middleware('jwt.auth', 'CheckUserOrRole:super');
     Route::delete('delete/{id}', 'RentController@delete')->middleware('jwt.auth', 'CheckUserOrRole:super');
 });
