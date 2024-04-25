@@ -37,7 +37,7 @@ class RentController extends Controller
 
 
         $data = [
-            'book_id' => $request['books'][0]['book_id'],
+            'books' => $request['books'],
             'user_id' => Auth::user()->id,
             'rent_date' => Carbon::now()->format('Y-m-d'), // Use o formato 'Y-m-d' para datas
             'scheduled_return' => Carbon::now()->addWeek()->format('Y-m-d'),

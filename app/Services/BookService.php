@@ -27,7 +27,9 @@ class BookService implements CrudServiceInterface {
     {
         $book = Book::create($data);
         if (isset($data['authors']) && is_array($data['authors'])) {
-            $book->authors()->attach($data['authors']);
+            foreach($data['authors'] as $author){
+                $book->authors()->attach($author['author_id']);
+            }
         }
 
         return $book;
@@ -37,6 +39,11 @@ class BookService implements CrudServiceInterface {
     {
         $book = Book::findOrFail($id);
         $book->update($data);
+        if (isset($data['authors']) && is_array($data['authors'])) {
+            $authorIds = collect($data['authors'])->pluck('author_id')->toArray();
+            $book->authors()->sync($authorIds);
+        }
+
         return $book;
     }
 

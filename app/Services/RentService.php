@@ -6,6 +6,7 @@ use App\Models\Rent;
 use App\Models\User;
 use App\Interfaces\CrudServiceInterface;
 use App\Events\NewBookRent;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -28,7 +29,8 @@ class RentService implements CrudServiceInterface {
     {
         $rules = [
             'user_id' => 'exists:users,id',
-            'book_id' => 'required|exists:books,id',
+            'books'    => 'required|array',
+            'books.*.book_id'  => 'required|exists:books,id',
         ];
 
         $validator = Validator::make($data, $rules);
@@ -40,9 +42,17 @@ class RentService implements CrudServiceInterface {
             return $errorsArray;
         }
 
-        $rent = Rent::create($data);
+        foreach($data['books'] as $book) {
+            $rent[] = Rent::create([
+                'user_id' => $data['user_id'],
+                'book_id' => $book['book_id'],
+                'rent_date' => $data['rent_date'],
+                'scheduled_return' => $data['scheduled_return'],
+                'status' => 'rented'
+            ]);
+        }
 
-        dispatch(new NewBookRent(User::first()));
+        dispatch(new NewBookRent(User::find($data['user_id'])));
 
         return $rent;
     }
