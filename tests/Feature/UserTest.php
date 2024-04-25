@@ -14,32 +14,23 @@ class UserTest extends TestCaseBase
     public function testGetUser(): void
     {
         $mock = $this->mocks();
-
         $authData = $this->createUserAndGetToken('super');
 
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $authData['token'],
-        ])->get('/api/user/index');
-
+        $response = $this->makeRequest('get', '/api/user/index', $authData['header']);
         $content = $response->getContent();
-
         $responseData = json_decode($content, true);
 
         $response->assertStatus(200);
-        // $this->assertEquals(3, count($responseData));
+        $this->assertEquals(User::count(), count($responseData));
     }
 
     public function testGetUserById(): void
     {
         $mock = $this->mocks();
-
         $authData = $this->createUserAndGetToken('super');
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $authData['token'],
-        ])->get('/api/user/show/' . $mock['user']->id);
-
+        
+        $response = $this->makeRequest('get', '/api/user/show/' . $mock['user']->id, $authData['header']);
         $content = $response->getContent();
-
         $responseData = json_decode($content, true);
 
         $response->assertStatus(200);
@@ -48,14 +39,14 @@ class UserTest extends TestCaseBase
 
     public function testCreateUser(): void
     {
-        $response = $this->post('/api/user/store', [
+        $data = [
             'email' => 'teste@teste.com',
             'password' => 'password',
             'name' => 'teste'
-        ]);
+        ];
 
+        $response = $this->makeRequest('post', '/api/user/store/', [], $data);
         $content = $response->getContent();
-
         $responseData = json_decode($content, true);
 
         $response->assertStatus(200);
@@ -64,17 +55,15 @@ class UserTest extends TestCaseBase
 
     public function testUpdateUser(): void
     {
-        $authData = $this->createUserAndGetToken('super');
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $authData['token'],
-        ])->put('/api/user/update/'.$authData['user']->id, [
+        $authData = $this->createUserAndGetToken();
+        $data =   [
             'email' => $authData['user']->email,
             'password' => 'password1',
             'name' => 'teste2'
-        ]);
-
+        ];
+        
+        $response = $this->makeRequest('put', '/api/user/update/'.$authData['user']->id, $authData['header'], $data);
         $content = $response->getContent();
-
         $responseData = json_decode($content, true);
 
         $response->assertStatus(200);
@@ -83,13 +72,11 @@ class UserTest extends TestCaseBase
 
     public function testDeleteUser(): void
     {
+        $mock = $this->mocks();
         $authData = $this->createUserAndGetToken('super');
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $authData['token'],
-        ])->delete('/api/user/delete/'.$authData['user']->id);
 
+        $response = $this->makeRequest('delete', '/api/user/delete/' .$authData['user']->id, $authData['header']);
         $content = $response->getContent();
-
         $responseData = json_decode($content, true);
 
         $response->assertStatus(200);

@@ -49,6 +49,7 @@ class BookController extends Controller
         $data = [
             'title' => $request['title'],
             'publish_date' => $request['publish_date'],
+            'authors' => $request['authors'],
         ];
 
         $book = $this->bookService->update($data, $id);

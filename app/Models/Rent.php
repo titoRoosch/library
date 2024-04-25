@@ -22,8 +22,7 @@ class Rent extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function books()
-    {
-        return $this->belongsTo(Book::class);
+    public function books(){
+        return $this->belongsToMany(Book::class, 'rents', 'id', 'book_id');
     }
 }

@@ -16,8 +16,6 @@ class UsersTableSeeder extends Seeder
             'role' => 'super',
             'password' => Hash::make('password'),
         ]);
-
-        // Adicione mais usuários conforme necessário
     }
 }
 

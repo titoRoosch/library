@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Author;
 use App\Models\Book;
 use App\Models\User;
+use App\Models\Rent;
 use App\Events\NewBookRent;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -21,36 +22,27 @@ class RentTest extends TestCaseBase
     public function testGetRent(): void
     {
         $mock = $this->mocks();
-
         $authData = $this->createUserAndGetToken('super');
-
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $authData['token'],
-        ])->get('/api/rent/index');
-
+        
+        $response = $this->makeRequest('get', '/api/rent/index', $authData['header']);
         $content = $response->getContent();
-
         $responseData = json_decode($content, true);
 
         $response->assertStatus(200);
-        // $this->assertEquals(3, count($data));
+        $this->assertEquals(Rent::count(), count($responseData));
     }
 
     public function testGetRentById(): void
     {
         $mock = $this->mocks();
-
         $authData = $this->createUserAndGetToken('super');
-
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $authData['token'],
-        ])->get('/api/rent/show/'.$mock['user']->rents[0]->id);
-
+        
+        $response = $this->makeRequest('get', '/api/rent/show/' . $mock['user']->rents[0]->id, $authData['header']);
         $content = $response->getContent();
-
         $responseData = json_decode($content, true);
 
         $response->assertStatus(200);
+        $this->assertEquals($mock['user']->rents[0]->id, $responseData['id']);
     }
 
     public function testCreateRent() : void
@@ -59,21 +51,18 @@ class RentTest extends TestCaseBase
         Queue::fake();
 
         $mock = $this->mocks();
-
-        $authData = $this->createUserAndGetToken();
-
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $authData['token'],
-        ])->post('/api/rent/store', [
+        $authData = $this->createUserAndGetToken('super');
+        $data =  [
             'books' => [
                 ['book_id' => $mock['books'][0]->id]
             ]
-        ]);
-
+        ];
+        
+        $response = $this->makeRequest('post', '/api/rent/store', $authData['header'], $data);
         $content = $response->getContent();
-
         $responseData = json_decode($content, true);
-
+        
+        
         Queue::assertPushed(NewBookRent::class);
         $response->assertStatus(200);
     }
@@ -82,37 +71,27 @@ class RentTest extends TestCaseBase
     {
 
         $mock = $this->mocks();
-
         $authData = $this->createUserAndGetToken('super');
+        $data = [
+            'status' => 'returned'
+        ];
 
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $authData['token'],
-        ])->put('/api/rent/update/'.$mock['user']->rents[0]->id, [
-            'status' => 'returned',
-        ]);
-
+        $response = $this->makeRequest('put', '/api/rent/update/'.$mock['user']->rents[0]->id, $authData['header'], $data);
         $content = $response->getContent();
-
         $responseData = json_decode($content, true);
-        $data = $responseData;
 
         $response->assertStatus(200);
         $this->assertEquals($responseData['status'], 'returned');
+        
     }
 
     public function testDeleteRent() : void
     {
-
         $mock = $this->mocks();
-
         $authData = $this->createUserAndGetToken('super');
 
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $authData['token'],
-        ])->delete('/api/rent/delete/'.$mock['user']->rents[0]->id );
-
+        $response = $this->makeRequest('delete', '/api/rent/delete/'.$mock['user']->rents[0]->id, $authData['header']);
         $content = $response->getContent();
-
         $responseData = json_decode($content, true);
 
         $response->assertStatus(200);
@@ -129,16 +108,12 @@ class RentTest extends TestCaseBase
         }
 
         foreach ($books as $book) {
-            // Verifica se o livro existe antes de tentar anexá-lo ao usuário
-            if (Book::where('id', $book->id)->exists()) {
-                $user->books()->attach($book->id, [
-                    'rent_date' => Carbon::now()->format('Y-m-d'), // Use o formato 'Y-m-d' para datas
-                    'scheduled_return' => Carbon::now()->addWeek()->format('Y-m-d'),
-                    'status' => 'rented'
-                ]);
-            }
+            $user->books()->attach($book->id, [
+                'rent_date' => Carbon::now()->format('Y-m-d'),
+                'scheduled_return' => Carbon::now()->addWeek()->format('Y-m-d'),
+                'status' => 'rented'
+            ]);
         }
-        
 
         $mock = [
             'author' => $author,

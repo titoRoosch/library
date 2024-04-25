@@ -4,6 +4,7 @@ namespace Tests;
 
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Testing\TestResponse;
 use App\Models\User;
 
 abstract class TestCaseBase extends BaseTestCase
@@ -24,6 +25,34 @@ abstract class TestCaseBase extends BaseTestCase
 
         $token = json_decode($response->getContent(), true)['access_token'];
 
-        return ['user' => $user, 'token' => $token];
+        $header = [
+            'Authorization' => 'Bearer ' . $token ,
+        ];
+
+        return ['user' => $user, 'token' => $token, 'header' => $header];
+    }
+
+    protected function makeRequest(string $method, string $uri, array $headers = [], array $data = []): TestResponse
+    {
+        $response = $this->withHeaders($headers);
+
+        switch ($method) {
+            case 'get':
+                $response = $response->get($uri);
+                break;
+            case 'post':
+                $response = $response->post($uri, $data);
+                break;
+            case 'put':
+                $response = $response->put($uri, $data);
+                break;
+            case 'delete':
+                $response = $response->delete($uri);
+                break;
+            default:
+                throw new \InvalidArgumentException("Unsupported HTTP method: {$method}");
+        }
+
+        return $response;
     }
 }
