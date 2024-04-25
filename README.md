@@ -79,14 +79,14 @@ Este é um sistema de gerenciamento de biblioteca construído com Laravel.
 
 Para configurar o envio de e-mails, você precisa adicionar as informações de configuração do e-mail no arquivo `.env`. Abaixo estão as variáveis de ambiente relacionadas ao e-mail que você pode configurar:
 
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.example.com
-MAIL_PORT=587
-MAIL_USERNAME=user@example.com
-MAIL_PASSWORD=your_password
-MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS=from@example.com
-MAIL_FROM_NAME="${APP_NAME}"
+    MAIL_MAILER=smtp
+    MAIL_HOST=smtp.example.com
+    MAIL_PORT=587
+    MAIL_USERNAME=user@example.com
+    MAIL_PASSWORD=your_password
+    MAIL_ENCRYPTION=tls
+    MAIL_FROM_ADDRESS=from@example.com
+    MAIL_FROM_NAME="${APP_NAME}"
 
 Certifique-se de substituir os valores de exemplo pelos detalhes da sua configuração de e-mail.
 
