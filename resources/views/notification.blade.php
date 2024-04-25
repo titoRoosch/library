@@ -90,7 +90,7 @@
     <div class="spacing"></div>
     <div id ="rightbar">
         <h1 class="heading"></h1>
-        <p >Hello!</p>
+        <p >Hello! {{$name}}</p>
         <p>Thank you for renting books with us.</p>
         <p>Please be aware of the devolution date.</p>
     

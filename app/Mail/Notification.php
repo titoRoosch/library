@@ -40,6 +40,10 @@ class Notification extends Mailable
     {
         return new Content(
             view: 'notification',
+            with: [
+                'name' => $this->user->name,
+            ],
+
         );
     }
 
