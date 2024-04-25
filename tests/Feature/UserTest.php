@@ -95,6 +95,19 @@ class UserTest extends TestCaseBase
         $response->assertStatus(200);
     }
 
+    public function testDeleteUserForbbiden(): void
+    {
+        $mock = $this->mocks();
+        $authData = $this->createUserAndGetToken();
+
+        $response = $this->makeRequest('delete', '/api/user/delete/' . $mock['user']->id, $authData['header']);
+        $content = $response->getContent();
+        $responseData = json_decode($content, true);
+
+        $response->assertStatus(403);
+        $this->assertEquals('Unauthorized', $responseData['error']);
+    }
+
     protected function mocks() 
     {
         $user = User::factory()->create();
