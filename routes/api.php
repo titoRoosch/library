@@ -52,9 +52,9 @@ Route::prefix('book')->middleware(['api', 'jwt.auth'])->namespace('App\Http\Cont
 
 
 Route::prefix('rent')->middleware(['api', 'jwt.auth'])->namespace('App\Http\Controllers')->group(function () {
-    Route::get('index', 'RentController@index')->middleware('checkUserRole:super');
-    Route::get('show/{id}', 'RentController@show')->middleware('jwt.auth');
+    Route::get('index', 'RentController@index')->middleware('jwt.auth', 'checkUserRole:super');
+    Route::get('show/{id}', 'RentController@show')->middleware('jwt.auth', 'checkUserRole:super');
     Route::post('store', 'RentController@store')->middleware('jwt.auth');
-    Route::put('update/{id}', 'RentController@update')->middleware('jwt.auth', 'CheckUserOrRole:super');
-    Route::delete('delete/{id}', 'RentController@delete')->middleware('jwt.auth', 'CheckUserOrRole:super');
+    Route::put('update/{id}', 'RentController@update')->middleware('jwt.auth', 'checkUserRole:super');
+    Route::delete('delete/{id}', 'RentController@delete')->middleware('jwt.auth', 'checkUserRole:super');
 });

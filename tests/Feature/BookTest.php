@@ -90,6 +90,19 @@ class BookTest extends TestCaseBase
         $response->assertStatus(200);
     }
 
+    public function testDeleteBookForbbiden(): void
+    {
+        $mock = $this->mocks();
+        $authData = $this->createUserAndGetToken();
+
+        $response = $this->makeRequest('delete', '/api/book/delete/' . $mock['books'][0]->id, $authData['header']);
+        $content = $response->getContent();
+        $responseData = json_decode($content, true);
+
+        $response->assertStatus(403);
+        $this->assertEquals('Unauthorized', $responseData['error']);
+    }
+
 
     protected function mocks() 
     {

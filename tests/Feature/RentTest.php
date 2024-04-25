@@ -32,6 +32,19 @@ class RentTest extends TestCaseBase
         $this->assertEquals(Rent::count(), count($responseData));
     }
 
+    public function testGetRentForbbiden(): void
+    {
+        $mock = $this->mocks();
+        $authData = $this->createUserAndGetToken();
+
+        $response = $this->makeRequest('get', '/api/rent/index', $authData['header']);
+        $content = $response->getContent();
+        $responseData = json_decode($content, true);
+
+        $response->assertStatus(403);
+        $this->assertEquals('Unauthorized', $responseData['error']);
+    }
+
     public function testGetRentById(): void
     {
         $mock = $this->mocks();
@@ -61,7 +74,6 @@ class RentTest extends TestCaseBase
         $response = $this->makeRequest('post', '/api/rent/store', $authData['header'], $data);
         $content = $response->getContent();
         $responseData = json_decode($content, true);
-        
         
         Queue::assertPushed(NewBookRent::class);
         $response->assertStatus(200);

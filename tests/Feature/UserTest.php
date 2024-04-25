@@ -24,6 +24,19 @@ class UserTest extends TestCaseBase
         $this->assertEquals(User::count(), count($responseData));
     }
 
+    public function testGetUserForbbiden(): void
+    {
+        $mock = $this->mocks();
+        $authData = $this->createUserAndGetToken();
+
+        $response = $this->makeRequest('get', '/api/user/index', $authData['header']);
+        $content = $response->getContent();
+        $responseData = json_decode($content, true);
+
+        $response->assertStatus(403);
+        $this->assertEquals('Unauthorized', $responseData['error']);
+    }
+
     public function testGetUserById(): void
     {
         $mock = $this->mocks();
