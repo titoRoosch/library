@@ -75,6 +75,16 @@ Este é um sistema de gerenciamento de biblioteca construído com Laravel.
     php artisan db:seed --class=UsersTableSeeder
     ```
 
+16. Realize a configuração JWT:
+    ```
+    php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"
+    ```
+
+17. Gere a chave JWT:
+    ```
+    php artisan jwt:secret
+    ```
+
 ## Configuração de E-mail
 
 Para configurar o envio de e-mails, você precisa adicionar as informações de configuração do e-mail no arquivo `.env`. Abaixo estão as variáveis de ambiente relacionadas ao e-mail que você pode configurar:
